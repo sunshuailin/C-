@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+int main(void)
+{
+	int year, month;
+	int week;
+	int sumdays = 0, monthdays = 0;
+	int i;
+
+	do {
+		printf("输入日期(year,month):");
+		scanf("%d,%d", &year, &month);
+	} while (!(year >= 1970 && month >= 1 && month <= 12));
+
+	// 1970 ~ year - 1
+	for (i = 1970; i < year; i++) {
+		if (!(i % 4 == 0 && i % 100 || i % 400 == 0)) {
+			sumdays += 365;
+		} else {
+			sumdays += 366;
+		}
+	}
+
+	// year.1 ~ year.month
+	for (i = 1; i < month; i++) {
+		if (1 == i || 3 == i || 5 == i || 7 == i || \
+				8 == i || 10 == i || 12 == i)
+			sumdays += 31;
+		else if (4 == i || 6 == i || 9 == i || 11 == i) {
+			sumdays += 30;
+		} else {
+			sumdays += year % 4 == 0 && year % 100 || \
+					   year % 400 == 0 ? 29 : 28;
+		}
+	}
+	sumdays += 1; // 1号
+	// sumdays 就是从1970.1.1到year.month.1经历了多少天
+	// 1970.1.1是星期4，
+	week = (sumdays + 3) % 7;
+
+	// month有多少天
+	if (1 == month || 3 == month || 5 == month || 7 == month || \
+			8 == month || 10 == month || 12 == month)
+		monthdays = 31;
+	else if (4 == month || 6 == month || 9 == month || 11 == month) {
+		monthdays = 30;
+	} else {
+		monthdays = year % 4 == 0 && year % 100 || \
+				   year % 400 == 0 ? 29 : 28;
+	}
+
+	// 打印
+	printf("     %d月 %d\n", month, year);
+	printf("日 一 二 三 四 五 六\n");
+	// week是输入的year.month.1星期
+	for (i = 0; i < week; i++)
+		printf("   "); // for只有一条语句可省略花括号
+	for (i = 1; i <= monthdays; i++) {
+		// 输出的数字有颜色的   32m绿色
+		printf("\033[32m%2d", i);
+		// 关闭属性
+		printf("\033[0m");
+		printf("%c", (i + week) % 7 ? ' ' : '\n');
+	}
+	printf("\n");
+
+	return 0;
+}
